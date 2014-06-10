@@ -86,4 +86,15 @@ class Action
       })
     end
   end
+
+  def self.from_review(r)
+    return unless r.valid?
+
+    Substory.from_action({
+      user_id: r.user.id,
+      action_type: "reviewed",
+      anime_id: r.anime.slug,
+      review_id: r.id,
+    })
+  end
 end
