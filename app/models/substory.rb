@@ -104,6 +104,19 @@ class Substory < ActiveRecord::Base
         }
       })
 
+    elsif data[:action_type] == "reviewed"
+
+      review = Review.find data[:review_id]
+      anime = Anime.find data[:anime_id]
+      story = Story.for_user_and_anime(user, anime)
+
+      Substory.create({
+        user: user,
+        substory_type: "reviewed",
+        story: story,
+        target: review
+      })
+
     end
   end
 end
