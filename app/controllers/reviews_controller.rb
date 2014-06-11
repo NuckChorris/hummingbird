@@ -88,6 +88,7 @@ class ReviewsController < ApplicationController
     @review.rating_enjoyment  = [[1, params["review"]["rating_enjoyment"].to_i].max, 10].min rescue nil
 
     if @review.save
+      Action.from_review(@review)
       redirect_to anime_review_path(@anime, @review)
     else
       flash[:error] = "Couldn't save your review, something went wrong."
