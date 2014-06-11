@@ -13,6 +13,8 @@ Hummingbird.Substory = DS.Model.extend
         "On Hold": " has placed on hold."
         "Dropped": " has dropped."
       }[@get('newStatus')]
+    else if @get('type') == "reviewed"
+      " wrote a review."
     else if @get('type') == "watched_episode"
       " watched episode " + @get('episodeNumber') + "."
     else
