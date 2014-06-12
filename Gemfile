@@ -76,7 +76,7 @@ end
 gem 'haml', '~> 4.0'
 gem 'haml-rails'
 gem 'simple_form'
-gem 'rdiscount'
+gem 'kramdown'
 
 # Attachments
 gem "paperclip", "~> 4.1"
