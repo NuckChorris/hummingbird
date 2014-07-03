@@ -6,6 +6,7 @@ class FullMangaSerializer < MangaSerializer
 
   has_one :manga_library_entry
   has_many :featured_castings, root: :castings
+  has_many :trending_reviews, root: :reviews
 
   def manga_library_entry
     scope && MangaLibraryEntry.where(user_id: scope.id, manga_id: object.id).first
@@ -21,5 +22,9 @@ class FullMangaSerializer < MangaSerializer
 
   def featured_castings
     object.castings.where(featured: true).includes(:character).sort_by {|x| x.order || 100 }
+  end
+
+  def trending_reviews
+    object.reviews.includes(:user).order("wilson_score DESC").limit(4)
   end
 end

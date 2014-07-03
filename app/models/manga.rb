@@ -64,6 +64,7 @@ class Manga < ActiveRecord::Base
   }
 
   has_many :castings, dependent: :destroy, as: :castable
+  has_many :reviews, dependent: :destroy, as: :media
   has_and_belongs_to_many :genres
   has_many :manga_library_entries, dependent: :destroy
 
