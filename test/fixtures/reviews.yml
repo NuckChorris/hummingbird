@@ -4,7 +4,7 @@
 #
 #  id               :integer          not null, primary key
 #  user_id          :integer
-#  anime_id         :integer
+#  media_id         :integer
 #  content          :text
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
@@ -19,6 +19,7 @@
 #  wilson_score     :float            default(0.0)
 #  positive_votes   :integer          default(0)
 #  total_votes      :integer          default(0)
+#  media_type       :string(255)
 #
 
 one:
