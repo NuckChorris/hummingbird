@@ -79,7 +79,7 @@ class Anime < ActiveRecord::Base
 
   has_many :quotes, dependent: :destroy
   has_many :castings, dependent: :destroy, as: :castable
-  has_many :reviews, dependent: :destroy
+  has_many :reviews, dependent: :destroy, as: :media
   has_many :episodes, dependent: :destroy
   has_many :gallery_images, dependent: :destroy
   has_many :stories, as: :target, dependent: :destroy

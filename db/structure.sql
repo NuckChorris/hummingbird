@@ -1148,7 +1148,7 @@ ALTER SEQUENCE recommendations_id_seq OWNED BY recommendations.id;
 CREATE TABLE reviews (
     id integer NOT NULL,
     user_id integer,
-    anime_id integer,
+    media_id integer,
     content text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -1162,7 +1162,8 @@ CREATE TABLE reviews (
     summary character varying(255),
     wilson_score double precision DEFAULT 0.0,
     positive_votes integer DEFAULT 0,
-    total_votes integer DEFAULT 0
+    total_votes integer DEFAULT 0,
+    media_type character varying(255)
 );
 
 
@@ -2322,6 +2323,13 @@ CREATE UNIQUE INDEX index_people_on_mal_id ON people USING btree (mal_id);
 
 
 --
+-- Name: index_reviews_on_media_id_and_media_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_reviews_on_media_id_and_media_type ON reviews USING btree (media_id, media_type);
+
+
+--
 -- Name: index_stories_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3107,4 +3115,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140629091741');
 INSERT INTO schema_migrations (version) VALUES ('20140630020533');
 
 INSERT INTO schema_migrations (version) VALUES ('20140630031803');
+
+INSERT INTO schema_migrations (version) VALUES ('20140703085326');
 

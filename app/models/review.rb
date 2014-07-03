@@ -25,7 +25,7 @@ require 'wilson_score'
 
 class Review < ActiveRecord::Base
   belongs_to :user
-  belongs_to :anime
+  belongs_to :media, polymorphic: true
 
   validates :user, :anime, :content, :rating, :rating_animation, :rating_sound, :rating_character, :rating_enjoyment, :rating_story, presence: true
 
