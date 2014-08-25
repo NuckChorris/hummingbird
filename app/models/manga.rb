@@ -28,14 +28,8 @@
 #
 
 class Manga < ActiveRecord::Base
-  include PgSearch
-  pg_search_scope :fuzzy_search_by_title, against: [:romaji_title, :english_title],
-    using: {trigram: {threshold: 0.1}}, ranked_by: ":trigram"
-  pg_search_scope :simple_search_by_title, against: [:romaji_title, :english_title],
-    using: {tsearch: {normalization: 10, dictionary: "english"}}, ranked_by: ":tsearch"
-
   extend FriendlyId
-  friendly_id :romaji_title, use: [:slugged, :history]
+  friendly_id :canonical_title, use: [:slugged, :history]
 
   # Internal Constants
   private
@@ -44,7 +38,6 @@ class Manga < ActiveRecord::Base
 
   public
 
-  validates :romaji_title, presence: true
   validates :manga_type, inclusion: { in: VALID_TYPES }
 
   has_attached_file :cover_image,
@@ -61,6 +54,9 @@ class Manga < ActiveRecord::Base
   validates_attachment :poster_image, content_type: {
     content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"]
   }
+
+  has_many :titles, dependent: :destroy, as: :media
+  belongs_to :canonical_title, class_name: 'Title'
 
   has_many :favorites, dependent: :destroy, as: :item
   has_many :castings, dependent: :destroy, as: :castable

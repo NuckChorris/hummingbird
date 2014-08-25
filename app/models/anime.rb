@@ -36,12 +36,6 @@
 #
 
 class Anime < ActiveRecord::Base
-  include PgSearch
-  pg_search_scope :fuzzy_search_by_title, against: [:title, :alt_title],
-    using: {trigram: {threshold: 0.1}}, ranked_by: ":trigram"
-  pg_search_scope :simple_search_by_title, against: [:title, :alt_title],
-    using: {tsearch: {normalization: 10, dictionary: "english"}}, ranked_by: ":tsearch"
-
   extend FriendlyId
   friendly_id :canonical_title, :use => [:slugged, :history]
 
@@ -82,6 +76,8 @@ class Anime < ActiveRecord::Base
     end
   end
 
+  has_many :titles, dependent: :destroy, as: :media
+  belongs_to :canonical_title, class_name: 'Title'
   has_many :quotes, dependent: :destroy
   # TODO: pick a name and stick to it
   has_many :castings, dependent: :destroy, as: :castable
@@ -97,6 +93,11 @@ class Anime < ActiveRecord::Base
   has_many :watchlists, dependent: :destroy
   # has_many :consumings, as: :item TODO: this will be used once we decide to unify library stuff 
   validates :title, :presence => true, :uniqueness => true
+
+  # Always eager_load (INNER JOIN) titles
+  default_scope { eager_load(:titles) }
+  # And preload (second query) canonical_title
+  default_scope { preload(:canonical_title) }
 
   # Filter out hentai if `filterp` is true or nil.
   def self.sfw_filter(current_user)
