@@ -3,9 +3,7 @@
 # Table name: manga
 #
 #  id                        :integer          not null, primary key
-#  romaji_title              :string(255)
 #  slug                      :string(255)
-#  english_title             :string(255)
 #  synopsis                  :text             default(""), not null
 #  poster_image_file_name    :string(255)
 #  poster_image_content_type :string(255)
@@ -26,6 +24,7 @@
 #  volume_count              :integer
 #  chapter_count             :integer
 #  manga_type                :string(255)      default("Manga")
+#  canonical_title_id        :integer
 #
 
 class Manga < ActiveRecord::Base

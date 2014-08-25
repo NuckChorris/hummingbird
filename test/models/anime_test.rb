@@ -3,8 +3,6 @@
 # Table name: anime
 #
 #  id                        :integer          not null, primary key
-#  title                     :string(255)
-#  alt_title                 :string(255)
 #  slug                      :string(255)
 #  age_rating                :string(255)
 #  episode_count             :integer
@@ -22,7 +20,6 @@
 #  user_count                :integer          default(0), not null
 #  thetvdb_series_id         :string(255)
 #  thetvdb_season_id         :string(255)
-#  english_canonical         :boolean          default(FALSE)
 #  age_rating_guide          :string(255)
 #  show_type                 :string(255)
 #  started_airing_date       :date
@@ -35,6 +32,7 @@
 #  cover_image_top_offset    :integer          default(0), not null
 #  ann_id                    :integer
 #  started_airing_date_known :boolean          default(TRUE), not null
+#  canonical_title_id        :integer
 #
 
 require 'test_helper'

@@ -63,8 +63,6 @@ SET default_with_oids = false;
 
 CREATE TABLE anime (
     id integer NOT NULL,
-    title character varying(255),
-    alt_title character varying(255),
     slug character varying(255),
     age_rating character varying(255),
     episode_count integer,
@@ -82,7 +80,6 @@ CREATE TABLE anime (
     user_count integer DEFAULT 0 NOT NULL,
     thetvdb_series_id character varying(255),
     thetvdb_season_id character varying(255),
-    english_canonical boolean DEFAULT false,
     age_rating_guide character varying(255),
     show_type character varying(255),
     started_airing_date date,
@@ -94,7 +91,8 @@ CREATE TABLE anime (
     poster_image_updated_at timestamp without time zone,
     cover_image_top_offset integer DEFAULT 0 NOT NULL,
     ann_id integer,
-    started_airing_date_known boolean DEFAULT true NOT NULL
+    started_airing_date_known boolean DEFAULT true NOT NULL,
+    canonical_title_id integer
 );
 
 
@@ -820,9 +818,7 @@ CREATE TABLE genres_manga (
 
 CREATE TABLE manga (
     id integer NOT NULL,
-    romaji_title character varying(255),
     slug character varying(255),
-    english_title character varying(255),
     synopsis text DEFAULT ''::text NOT NULL,
     poster_image_file_name character varying(255),
     poster_image_content_type character varying(255),
@@ -842,7 +838,8 @@ CREATE TABLE manga (
     cover_image_top_offset integer DEFAULT 0,
     volume_count integer,
     chapter_count integer,
-    manga_type character varying(255) DEFAULT 'Manga'::character varying
+    manga_type character varying(255) DEFAULT 'Manga'::character varying,
+    canonical_title_id integer
 );
 
 
@@ -1303,6 +1300,40 @@ ALTER SEQUENCE substories_id_seq OWNED BY substories.id;
 
 
 --
+-- Name: titles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE titles (
+    id integer NOT NULL,
+    media_id integer,
+    media_type character varying(255),
+    title character varying(255) NOT NULL,
+    language character varying(255) NOT NULL,
+    region character varying(255),
+    kind character varying(255)
+);
+
+
+--
+-- Name: titles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE titles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: titles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE titles_id_seq OWNED BY titles.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1727,6 +1758,13 @@ ALTER TABLE ONLY substories ALTER COLUMN id SET DEFAULT nextval('substories_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY titles ALTER COLUMN id SET DEFAULT nextval('titles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
@@ -2016,6 +2054,14 @@ ALTER TABLE ONLY substories
 
 
 --
+-- Name: titles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY titles
+    ADD CONSTRAINT titles_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2045,20 +2091,6 @@ ALTER TABLE ONLY votes
 
 ALTER TABLE ONLY watchlists
     ADD CONSTRAINT watchlists_pkey PRIMARY KEY (id);
-
-
---
--- Name: anime_search_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX anime_search_index ON anime USING gin ((((COALESCE((title)::text, ''::text) || ' '::text) || COALESCE((alt_title)::text, ''::text))) gin_trgm_ops);
-
-
---
--- Name: anime_simple_search_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX anime_simple_search_index ON anime USING gin (((to_tsvector('simple'::regconfig, COALESCE((title)::text, ''::text)) || to_tsvector('simple'::regconfig, COALESCE((alt_title)::text, ''::text)))));
 
 
 --
@@ -2384,6 +2416,20 @@ CREATE INDEX index_substories_on_user_id ON substories USING btree (user_id);
 
 
 --
+-- Name: index_titles_on_language_and_region_and_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_titles_on_language_and_region_and_kind ON titles USING btree (language, region, kind);
+
+
+--
+-- Name: index_titles_on_media_id_and_media_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_titles_on_media_id_and_media_type ON titles USING btree (media_id, media_type);
+
+
+--
 -- Name: index_users_on_authentication_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2493,20 +2539,6 @@ CREATE UNIQUE INDEX index_watchlists_on_user_id_and_anime_id ON watchlists USING
 --
 
 CREATE INDEX index_watchlists_on_user_id_and_status ON watchlists USING btree (user_id, status);
-
-
---
--- Name: manga_fuzzy_search_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX manga_fuzzy_search_index ON manga USING gin ((((COALESCE((romaji_title)::text, ''::text) || ' '::text) || COALESCE((english_title)::text, ''::text))) gin_trgm_ops);
-
-
---
--- Name: manga_simple_search_index; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX manga_simple_search_index ON manga USING gin (((to_tsvector('simple'::regconfig, COALESCE((romaji_title)::text, ''::text)) || to_tsvector('simple'::regconfig, COALESCE((english_title)::text, ''::text)))));
 
 
 --
@@ -3137,6 +3169,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140630020533');
 
 INSERT INTO schema_migrations (version) VALUES ('20140630031803');
 
+INSERT INTO schema_migrations (version) VALUES ('20140707023720');
+
 INSERT INTO schema_migrations (version) VALUES ('20140707100609');
 
 INSERT INTO schema_migrations (version) VALUES ('20140707102503');
@@ -3150,6 +3184,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140714072239');
 INSERT INTO schema_migrations (version) VALUES ('20140714111212');
 
 INSERT INTO schema_migrations (version) VALUES ('20140731164542');
+
+INSERT INTO schema_migrations (version) VALUES ('20140806062842');
+
+INSERT INTO schema_migrations (version) VALUES ('20140806075719');
 
 INSERT INTO schema_migrations (version) VALUES ('20140813001044');
 
