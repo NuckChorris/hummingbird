@@ -1,4 +1,5 @@
 require 'sidekiq/web'
+require 'pub_sub'
 
 Hummingbird::Application.routes.draw do
   resources :library_entries, except: [:new, :edit]
@@ -15,6 +16,8 @@ Hummingbird::Application.routes.draw do
   resources :reviews do
     post :vote
   end
+
+  get '/events' => PubSub
 
   resource :chat, only: [:show, :create]
 
