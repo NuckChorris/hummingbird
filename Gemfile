@@ -99,13 +99,15 @@ gem 'sidekiq', '~> 3.1'
 
 gem 'sinatra', :require => nil
 
+gem 'faye-websocket'
+
 gem 'pg_search', '~> 0.7'
 
 # Admin panel
 gem "rails_admin"
 
-# Use Unicorn as the app server
-gem 'unicorn', "~> 4.8"
+# Use Puma as the app server
+gem 'puma'
 
 # Needed for Dropbox backup
 gem 'dropbox-api'

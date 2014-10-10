@@ -133,6 +133,9 @@ GEM
       rake
       rake-compiler
     fastclick-rails (1.0.1)
+    faye-websocket (0.7.5)
+      eventmachine (>= 0.12.0)
+      websocket-driver (>= 0.3.5)
     ffi (1.9.5)
     flamegraph (0.0.5)
       fast_stack
@@ -202,7 +205,6 @@ GEM
     kaminari (0.16.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    kgio (2.9.2)
     launchy (2.4.2)
       addressable (~> 2.3)
     letter_opener (1.2.0)
@@ -270,6 +272,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    puma (2.9.1)
+      rack (>= 1.1, < 2.0)
     qunit-rails (0.0.7)
       railties
     rack (1.5.2)
@@ -318,7 +322,6 @@ GEM
       activesupport (= 4.1.6)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    raindrops (0.13.0)
     rake (10.3.2)
     rake-compiler (0.9.3)
       rake
@@ -416,10 +419,6 @@ GEM
     uglifier (2.5.3)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-    unicorn (4.8.3)
-      kgio (~> 2.6)
-      rack
-      raindrops (~> 0.7)
     virtus (1.0.3)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -427,6 +426,7 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.3)
       rack (>= 1.0)
+    websocket-driver (0.3.5)
     zurb-foundation (4.3.2)
       sass (>= 3.2.0)
 
@@ -452,6 +452,7 @@ DEPENDENCIES
   fakeweb
   fast_blank
   fastclick-rails (~> 1.0)
+  faye-websocket
   flamegraph
   font-awesome-sass
   foreman
@@ -479,6 +480,7 @@ DEPENDENCIES
   pg (= 0.17.1)
   pg_search (~> 0.7)
   pghero
+  puma
   qunit-rails
   rack-cors
   rack-livereload
@@ -503,5 +505,4 @@ DEPENDENCIES
   timecop
   twitter-typeahead-rails
   uglifier (>= 1.0.3)
-  unicorn (~> 4.8)
   zurb-foundation (~> 4.3.0)
